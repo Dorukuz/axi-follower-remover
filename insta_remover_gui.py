@@ -5,15 +5,16 @@ import json
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
+
 # Selenium components for browser automation and element interaction
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 # A stealthy version of ChromeDriver to bypass bot detection
 import undetected_chromedriver as uc
 
 running = False
-
 
 # Load usernames from a CSV file (expects a 'username' column)
 def load_usernames(csv_file):
@@ -24,6 +25,13 @@ def load_usernames(csv_file):
             usernames.append(row['username'])
     return usernames
 
+# Save the remaining usernames back to the CSV
+def save_usernames(usernames, csv_file):
+    with open(csv_file, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=['username'])
+        writer.writeheader()
+        for username in usernames:
+            writer.writerow({'username': username})
 
 # Load cookies from a local JSON file for session persistence
 def load_cookies():
@@ -33,20 +41,17 @@ def load_cookies():
     except FileNotFoundError:
         return None
 
-
 # Save cookies to a JSON file for future logins
 def save_cookies(driver):
     cookies = driver.get_cookies()
     with open("instagram_cookies.json", "w") as f:
         json.dump(cookies, f)
 
-
 # Log messages to a local file and print them to the console
 def log_message(message):
     with open("removal_log.txt", "a", encoding="utf-8") as log_file:
         log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {message}\n")
     print(message)
-
 
 # Main automation logic to remove followers from the given list
 def start_removal(csv_path, limit, chromium_path, ig_username):
@@ -86,7 +91,6 @@ def start_removal(csv_path, limit, chromium_path, ig_username):
 
     driver.get(f"https://www.instagram.com/{ig_username}/")
     try:
-        # Click followers link
         followers_link = WebDriverWait(driver, 15).until(
             EC.element_to_be_clickable((By.XPATH, "//li[2]//a//span"))
         )
@@ -98,12 +102,23 @@ def start_removal(csv_path, limit, chromium_path, ig_username):
         driver.quit()
         return
 
-    removed_count = 0
-    for username in usernames:
-        if not running or removed_count >= limit:
-            break
+    removed_count_today = 0
+
+    while usernames and running:
+        # If daily limit reached, wait 24 hours and reset
+        if removed_count_today >= limit:
+            log_message(f"🔔 Daily limit of {limit} reached. Waiting 24 hours to resume...")
+            for i in range(24 * 60):  # sleep in 1-minute increments to allow stop
+                if not running:
+                    log_message("🛑 Script stopped during daily wait.")
+                    driver.quit()
+                    return
+                time.sleep(60)
+            removed_count_today = 0
+            log_message("🔔 Resuming after 24 hour wait.")
+
+        username = usernames.pop(0)
         try:
-            # Search for username
             search_input = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Search']"))
             )
@@ -111,40 +126,40 @@ def start_removal(csv_path, limit, chromium_path, ig_username):
             search_input.send_keys(username)
             time.sleep(2)
 
-            # Click Remove button
             remove_btn = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//div[contains(@class, 'x6nl9eh')]//div[contains(text(), 'Remove')]"))
             )
             remove_btn.click()
-            time.sleep(2)  # Wait for popup
+            time.sleep(2)
 
-            # Click confirmation Remove button in popup
             confirm_btn = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//button[normalize-space(text())='Remove']"))
             )
             confirm_btn.click()
             log_message(f"✅ Removed: {username}")
-            removed_count += 1
-            time.sleep(3 + (removed_count % 5))
+            removed_count_today += 1
+
+            # Save updated username list after each successful removal
+            save_usernames(usernames, csv_path)
+
+            # Wait 60 seconds before next removal
+            time.sleep(60)
+
         except Exception as e:
             log_message(f"⚠️ Error with {username}: {str(e)}")
             continue
 
     driver.quit()
-    log_message("✅ Script finished.")
+    log_message("✅ Script finished or stopped.")
 
-
-# Stop the follower removal loop by setting the running flag to False
+# Stop the follower removal loop
 def stop_removal():
     global running
     running = False
     log_message("🛑 Script stopped by user.")
 
-
-# Create and run the GUI for the Instagram Follower Remover tool
+# GUI interface for user interaction
 def run_gui():
-
-        # Start the follower removal in a separate thread
     def start_thread():
         csv_path = csv_entry.get()
         chromium_path = chrome_entry.get()
@@ -156,16 +171,12 @@ def run_gui():
             return
         threading.Thread(target=start_removal, args=(csv_path, limit, chromium_path, ig_username)).start()
 
-
-        # File dialog to select the followers CSV file
     def browse_csv():
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
         if path:
             csv_entry.delete(0, tk.END)
             csv_entry.insert(0, path)
 
-
-        # File dialog to select the path to Chromium/Chrome executable
     def browse_chrome():
         path = filedialog.askopenfilename(filetypes=[("Chrome Executable", "*.exe")])
         if path:
@@ -189,7 +200,7 @@ def run_gui():
     username_entry = tk.Entry(root, width=50)
     username_entry.grid(row=2, column=1)
 
-    tk.Label(root, text="Max Removals:").grid(row=3, column=0, sticky="w")
+    tk.Label(root, text="Max Removals per 24 hours:").grid(row=3, column=0, sticky="w")
     limit_entry = tk.Entry(root, width=10)
     limit_entry.insert(0, "50")
     limit_entry.grid(row=3, column=1, sticky="w")
