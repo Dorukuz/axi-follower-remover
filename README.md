@@ -16,7 +16,7 @@ A Python GUI tool that helps you mass-remove followers from your Instagram accou
 
 ## 🖥️ GUI Overview
 
-<img width="471" height="174" alt="image" src="https://github.com/user-attachments/assets/6e94323f-dce3-4129-b58a-c1c5724b93c4" />
+<img width="509" height="172" alt="image" src="https://github.com/user-attachments/assets/7ecd4769-3e92-4b25-995a-27944defebe8" />
 
 ---
 
