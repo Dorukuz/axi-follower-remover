@@ -24,6 +24,7 @@ A Python GUI tool that helps you mass-remove followers from your Instagram accou
 
 ## 🧰 Requirements
 
+- List of usernames that you want to remove as followers
 - Python 3.7+
 - Google Chrome or Chromium
 - ChromeDriver (compatible with your Chrome version)
