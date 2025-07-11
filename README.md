@@ -4,7 +4,7 @@ A Python GUI tool that helps you mass-remove followers from your Instagram accou
 
 ## ⚙️ Features
 
-- 60 second cooldown betwewen every removal for safety!
+- 60 second cooldown between every removal for safety!
 - Auto stops when reached daily cap and continues after 24 hours from where it left off.
 – Detailed explanation of code for beginners!
 - Remove followers from a CSV list.
