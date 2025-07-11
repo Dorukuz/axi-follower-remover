@@ -4,13 +4,14 @@ A Python GUI tool that helps you mass-remove followers from your Instagram accou
 
 ## ⚙️ Features
 
+- Auto stops when reached daily cap and continues after 24 hours from where it left off.
 – Detailed explanation of code for beginners!
 - Remove followers from a CSV list.
 - Supports login via saved cookies or manual login.
 - GUI built with Tkinter.
 - Uses undetected ChromeDriver for stealth automation.
 - Logs every removal action.
-- Manual stop functionality included.
+
 
 ---
 
