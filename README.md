@@ -1,4 +1,4 @@
-# AXI Instagram Follower Remover GUI 🧹
+# AXI Instagram Follower Remover With GUI 🧹
 
 A Python GUI tool that helps you mass-remove followers from your Instagram account using Selenium and a list of usernames.
 
