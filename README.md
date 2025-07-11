@@ -4,6 +4,7 @@ A Python GUI tool that helps you mass-remove followers from your Instagram accou
 
 ## ⚙️ Features
 
+– Detailed explanation of code for beginners!
 - Remove followers from a CSV list.
 - Supports login via saved cookies or manual login.
 - GUI built with Tkinter.
