@@ -1,2 +1,92 @@
-# axi-follower-remover
-A stealthy Python GUI tool to mass-remove ghost or spam followers from your Instagram account using Selenium and undetected ChromeDriver.
+# AXI Instagram Follower Remover GUI 🧹
+
+A Python GUI tool that helps you mass-remove followers from your Instagram account using Selenium and a list of usernames.
+
+## ⚙️ Features
+
+- Remove followers from a CSV list.
+- Supports login via saved cookies or manual login.
+- GUI built with Tkinter.
+- Uses undetected ChromeDriver for stealth automation.
+- Logs every removal action.
+- Manual stop functionality included.
+
+---
+
+## 🖥️ GUI Overview
+
+<img width="471" height="174" alt="image" src="https://github.com/user-attachments/assets/6e94323f-dce3-4129-b58a-c1c5724b93c4" />
+
+---
+
+## 🧰 Requirements
+
+- Python 3.7+
+- Google Chrome or Chromium
+- ChromeDriver (compatible with your Chrome version)
+- `undetected-chromedriver`
+- `selenium`
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 📄 CSV Format
+
+The CSV must contain a `username` column:
+
+```csv
+username
+user_one
+user_two
+user_three
+```
+
+---
+
+## 🚀 How to Use
+
+1. Clone the repo:
+    ```bash
+    git clone https://github.com/yourusername/insta-follower-remover.git
+    cd insta-follower-remover
+    ```
+
+2. Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. Run the script:
+    ```bash
+    python insta_remover_gui.py
+    ```
+
+4. Fill in:
+    - Path to your `followers.csv`
+    - Path to your Chrome/Chromium executable
+    - Instagram username
+    - Max number of followers to remove
+
+---
+
+## 📝 Log Output
+
+Each session logs actions to `removal_log.txt`.
+
+---
+
+## 🛑 Notes
+
+- You must manually log in the first time; cookies will be saved for future runs.
+- Instagram rate-limits may apply. Use this responsibly.
+
+---
+
+## 📜 License
+
+MIT License
